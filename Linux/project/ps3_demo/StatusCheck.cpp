@@ -33,7 +33,7 @@ bool bLJState = false, bRJState = false;
 minIni* StatusCheck::m_ini;
 minIni* StatusCheck::m_ini1;
 
-bool robotInStandby = true;
+bool robotInStandby = false;
 //#define Southpaw
 
 bool ToggleRobotStandby(void)
