@@ -63,7 +63,6 @@ namespace Robot
 		private:
 			static int m_old_btn;
 			static void mPlay(int motion_page, int mode = SOCCER, int wait = WAIT);
-			static void resetLEDs(CM730 &cm730);
 		public:
 			static int m_cur_mode;
 			static int m_is_started;
@@ -71,7 +70,7 @@ namespace Robot
 			static minIni* m_ini;
 			static minIni* m_ini1;
 
-			static void Check(LinuxJoy &ljoy, CM730 &cm730);
+			static void Check(LinuxJoy &ljoy, ArbotixPro &arbotixpro);
 
 	};
 }
