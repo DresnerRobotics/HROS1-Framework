@@ -55,16 +55,15 @@ void StatusCheck::Check(LinuxJoy &ljoy, ArbotixPro &arbotixpro)
 //////////////////////////////////////////////////////////////////////////////////////
     if (ljoy.buttonPressed(JOYSTICK_BUTTONS::PS))
     {
-        printf("PS button pressed\n");
+        printf("PS button pressed. Standby Mode has been toggled\n");
         if (Walking::GetInstance()->IsRunning() == true)
         {
             Walking::GetInstance()->Stop();
             while (Walking::GetInstance()->IsRunning() == 1) usleep(8000);
         }
         ToggleRobotStandby();
-        printf("Standby Mode has been toggled.\n");
-        printf("Robot Standby Mode Active: \n");
-        printf(robotInStandby ? "true" : "false");
+        printf("Robot Standby Mode Active: ");
+        printf(robotInStandby ? "true" : "false\n");
         usleep(8000);
     }
 
