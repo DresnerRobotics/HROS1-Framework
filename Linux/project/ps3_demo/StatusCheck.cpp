@@ -316,13 +316,9 @@ void StatusCheck::Check(LinuxJoy &ljoy, ArbotixPro &arbotixpro)
         double FBStep = 0, RLTurn = 0, RLStep = 0, xd, yd;
         static double speedAdjSum = 0;
 
-#ifdef Southpaw
-        rx = ljoy.axis(JOYSTICK_AXES::RX) / 256;
-        ry = ljoy.axis(JOYSTICK_AXES::RY) / 256;
-#else
         rx = ljoy.axis(JOYSTICK_AXES::LX) / 256;
         ry = ljoy.axis(JOYSTICK_AXES::LY) / 256;
-#endif
+
 
 //          fprintf(stderr, " (X:%d Y:%d)\n", rx, ry);
 
@@ -481,13 +477,8 @@ void StatusCheck::Check(LinuxJoy &ljoy, ArbotixPro &arbotixpro)
         tilt = MotionStatus::m_CurrentJoints.GetAngle(JointData::ID_HEAD_TILT);
         Point2D pos = Point2D(pan, tilt);
 
-#ifdef Southpaw
-        lx = -(PS3.key.LJoyX - 128);
-        ly = -(PS3.key.LJoyY - 128);
-#else
-        lx = -(PS3.key.RJoyX - 128);
-        ly = -(PS3.key.RJoyY - 128);
-#endif
+        lx = ljoy.axis(JOYSTICK_AXES::RX) / 256;
+        ly = ljoy.axis(JOYSTICK_AXES::RY) / 256;
 
         if (abs(lx) > dead_band || abs(ly) > dead_band)
         {
