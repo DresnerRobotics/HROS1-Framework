@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
 
 
     //determine current position
-    StatusCheck::m_cur_mode = GetCurrentPosition(cm730);
+    StatusCheck::m_cur_mode = GetCurrentPosition(arbotixpro);
     //LinuxActionScript::PlayMP3("../../../Data/mp3/ready.mp3");
     if ((argc > 1 && strcmp(argv[1], "-off") == 0) || (StatusCheck::m_cur_mode == SITTING))
     {
@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
 
     while (1)
     {
-        StatusCheck::Check(ljoy, ArbotixPro);
+        StatusCheck::Check(ljoy, arbotixpro);
 //        if(StatusCheck::m_is_started == 0)
 //            continue;
     }
