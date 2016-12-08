@@ -8,7 +8,7 @@
 #ifndef STATUSCHECK_H_
 #define STATUSCHECK_H_
 
-#include "CM730.h"
+#include "ArbotixPro.h"
 #include "minIni.h"
 #include "JoystickController.h"
 
