@@ -29,9 +29,9 @@
 #define U2D_DEV_NAME0       "/dev/ttyUSB0"
 #define U2D_DEV_NAME1       "/dev/ttyUSB1"
 
-LinuxCM730 linux_cm730(U2D_DEV_NAME0);
-CM730 cm730(&linux_cm730);
-int GetCurrentPosition(CM730 &cm730);
+LinuxArbotixPro linux_arbotixpro(U2D_DEV_NAME0);
+ArbotixPro arbotixpro(&linux_arbotixpro);
+int GetCurrentPosition(ArbotixPro &arbotixpro);
 ////////////////////////////////////////////
 Action::PAGE Page;
 Action::STEP Step;
@@ -58,10 +58,10 @@ int main(int argc, char *argv[])
     LinuxJoy ljoy = LinuxJoy();     // create our joystick object
 
     //////////////////// Framework Initialize ////////////////////////////
-    if (MotionManager::GetInstance()->Initialize(&cm730) == false)
+    if (MotionManager::GetInstance()->Initialize(&arbotixpro) == false)
     {
-        linux_cm730.SetPortName(U2D_DEV_NAME1);
-        if (MotionManager::GetInstance()->Initialize(&cm730) == false)
+        linux_arbotixpro.SetPortName(U2D_DEV_NAME1);
+        if (MotionManager::GetInstance()->Initialize(&arbotixpro) == false)
         {
             printf("Fail to initialize Motion Manager!\n");
             return 0;
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 
     int firm_ver = 0, retry = 0;
     //important but allow a few retries
-    while (cm730.ReadByte(JointData::ID_HEAD_PAN, MX28::P_VERSION, &firm_ver, 0)  != CM730::SUCCESS)
+    while (arbotixpro.ReadByte(JointData::ID_HEAD_PAN, AXDXL::P_VERSION, &firm_ver, 0)  != ArbotixPro::SUCCESS)
     {
         fprintf(stderr, "Can't read firmware version from Dynamixel ID %d!! \n\n", JointData::ID_HEAD_PAN);
         retry++;
@@ -162,19 +162,7 @@ int main(int argc, char *argv[])
         }
     }
     /////////////////////////////
-    /*
-        Walking::GetInstance()->m_Joint.SetEnableBody(true,true);
-        MotionManager::GetInstance()->SetEnable(true);
 
-            Walking::GetInstance()->LoadINISettings(m_ini);
-
-        cm730.WriteByte(CM730::P_LED_PANNEL, 0x01|0x02|0x04, NULL);
-
-        PS3Controller_Start();
-            LinuxActionScript::PlayMP3("../../../Data/mp3/ready.mp3");
-        Action::GetInstance()->Start(15);
-        while(Action::GetInstance()->IsRunning()) usleep(8*1000);
-    */
     Walking::GetInstance()->LoadINISettings(ini);
     MotionManager::GetInstance()->LoadINISettings(ini);
 
@@ -184,18 +172,18 @@ int main(int argc, char *argv[])
     MotionManager::GetInstance()->SetEnable(true);
 
 
-    cm730.WriteByte(CM730::P_LED_PANNEL, 0x02, NULL);
+
 
     // Start up our joystick. - It will also handle the cases where the joystick starts up after program
     ljoy.begin("/dev/input/js0");
 
-    cm730.WriteWord(CM730::P_LED_HEAD_L, cm730.MakeColor(1, 1, 1), 0);
+
     //determine current position
     StatusCheck::m_cur_mode = GetCurrentPosition(cm730);
     //LinuxActionScript::PlayMP3("../../../Data/mp3/ready.mp3");
     if ((argc > 1 && strcmp(argv[1], "-off") == 0) || (StatusCheck::m_cur_mode == SITTING))
     {
-        cm730.DXLPowerOn(false);
+        arbotixpro.DXLPowerOn(false);
         //for(int id=JointData::ID_R_SHOULDER_PITCH; id<JointData::NUMBER_OF_JOINTS; id++)
         //  cm730.WriteByte(id, MX28::P_TORQUE_ENABLE, 0, 0);
     }
@@ -205,14 +193,14 @@ int main(int argc, char *argv[])
         while (Action::GetInstance()->IsRunning()) usleep(8 * 1000);
     }
 
-    if ( cm730.WriteWord(CM730::ID_BROADCAST, MX28::P_MOVING_SPEED_L, 1023, 0) != CM730::SUCCESS )
+    if ( arbotixpro.WriteWord(ArbotixPro::ID_BROADCAST, AXDXL::P_MOVING_SPEED_L, 1023, 0) != ArbotixPro::SUCCESS )
     {
         printf( "Warning: TODO\r\n");
     }
 
     while (1)
     {
-        StatusCheck::Check(ljoy, cm730);
+        StatusCheck::Check(ljoy, ArbotixPro);
 //        if(StatusCheck::m_is_started == 0)
 //            continue;
     }
@@ -220,7 +208,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-int GetCurrentPosition(CM730 &cm730)
+int GetCurrentPosition(ArbotixPro &arbotixpro)
 {
     int m = Robot::READY, p, j, pos[31];
     int dMaxAngle1, dMaxAngle2, dMaxAngle3;
@@ -234,11 +222,11 @@ int GetCurrentPosition(CM730 &cm730)
     }
     for (p = 0; p < 6; p++)
     {
-        if (cm730.ReadWord(rl[p], MX28::P_PRESENT_POSITION_L, &pos[rl[p]], 0) != CM730::SUCCESS)
+        if (arbotixpro.ReadWord(rl[p], AXDXL::P_PRESENT_POSITION_L, &pos[rl[p]], 0) != ArbotixPro::SUCCESS)
         {
             printf("Failed to read position %d", rl[p]);
         }
-        if (cm730.ReadWord(ll[p], MX28::P_PRESENT_POSITION_L, &pos[ll[p]], 0) != CM730::SUCCESS)
+        if (arbotixpro.ReadWord(ll[p], AXDXL::P_PRESENT_POSITION_L, &pos[ll[p]], 0) != ArbotixPro::SUCCESS)
         {
             printf("Failed to read position %d", ll[p]);
         }
@@ -250,10 +238,10 @@ int GetCurrentPosition(CM730 &cm730)
     dMaxAngle1 = dMaxAngle2 = dMaxAngle3 = 0;
     for (p = 0; p < 6; p++)
     {
-        dAngle = abs(MX28::Value2Angle(pos[rl[p]]) - MX28::Value2Angle(Page.step[j].position[rl[p]]));
+        dAngle = abs(AXDXL::Value2Angle(pos[rl[p]]) - AXDXL::Value2Angle(Page.step[j].position[rl[p]]));
         if (dAngle > dMaxAngle1)
             dMaxAngle1 = dAngle;
-        dAngle = abs(MX28::Value2Angle(pos[ll[p]]) - MX28::Value2Angle(Page.step[j].position[ll[p]]));
+        dAngle = abs(AXDXL::Value2Angle(pos[ll[p]]) - AXDXL::Value2Angle(Page.step[j].position[ll[p]]));
         if (dAngle > dMaxAngle1)
             dMaxAngle1 = dAngle;
     }
@@ -262,10 +250,10 @@ int GetCurrentPosition(CM730 &cm730)
     j = Page.header.stepnum - 1;
     for (int p = 0; p < 6; p++)
     {
-        dAngle = abs(MX28::Value2Angle(pos[rl[p]]) - MX28::Value2Angle(Page.step[j].position[rl[p]]));
+        dAngle = abs(AXDXL::Value2Angle(pos[rl[p]]) - AXDXL::Value2Angle(Page.step[j].position[rl[p]]));
         if (dAngle > dMaxAngle2)
             dMaxAngle2 = dAngle;
-        dAngle = abs(MX28::Value2Angle(pos[ll[p]]) - MX28::Value2Angle(Page.step[j].position[ll[p]]));
+        dAngle = abs(AXDXL::Value2Angle(pos[ll[p]]) - AXDXL::Value2Angle(Page.step[j].position[ll[p]]));
         if (dAngle > dMaxAngle2)
             dMaxAngle2 = dAngle;
     }
@@ -274,10 +262,10 @@ int GetCurrentPosition(CM730 &cm730)
     j = Page.header.stepnum - 1;
     for (int p = 0; p < 6; p++)
     {
-        dAngle = abs(MX28::Value2Angle(pos[rl[p]]) - MX28::Value2Angle(Page.step[j].position[rl[p]]));
+        dAngle = abs(AXDXL::Value2Angle(pos[rl[p]]) - AXDXL::Value2Angle(Page.step[j].position[rl[p]]));
         if (dAngle > dMaxAngle3)
             dMaxAngle3 = dAngle;
-        dAngle = abs(MX28::Value2Angle(pos[ll[p]]) - MX28::Value2Angle(Page.step[j].position[ll[p]]));
+        dAngle = abs(AXDXL::Value2Angle(pos[ll[p]]) - AXDXL::Value2Angle(Page.step[j].position[ll[p]]));
         if (dAngle > dMaxAngle3)
             dMaxAngle3 = dAngle;
     }
