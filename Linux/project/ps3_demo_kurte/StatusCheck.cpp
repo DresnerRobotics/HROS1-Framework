@@ -164,6 +164,7 @@ void StatusCheck::Check(LinuxJoy &ljoy, ArbotixPro &arbotixpro)
         Action::GetInstance()->m_Joint.SetEnableBody(false);
         usleep(5000);
         Head::GetInstance()->m_Joint.SetEnableHeadOnly(true);
+        fprintf(stderr, "INITIALIZING WALK READY\n");
     }
 
     /*
