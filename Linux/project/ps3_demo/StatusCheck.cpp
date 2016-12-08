@@ -68,6 +68,7 @@ void StatusCheck::Check(LinuxJoy &ljoy, ArbotixPro &arbotixpro)
     if (robotInStandby == 1)
     {
         usleep(8000);
+        printf("Robot is in Standby Mode\n");
         return;
     }
 
