@@ -65,7 +65,7 @@ void StatusCheck::Check(LinuxJoy &ljoy, ArbotixPro &arbotixpro)
         printf("Robot Standby Mode Active: ");
         printf(robotInStandby ? "true" : "false\n");
         usleep(8000);
-        while (ljoy.buttonPressed(JOYSTICK_BUTTONS::PS) != 0) usleep(8000);
+        //while (ljoy.buttonPressed(JOYSTICK_BUTTONS::PS) != 0) usleep(8000);
     }
 
     if (robotInStandby == 1)
