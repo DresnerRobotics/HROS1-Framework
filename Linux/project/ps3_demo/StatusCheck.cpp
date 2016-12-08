@@ -62,13 +62,16 @@ void StatusCheck::Check(LinuxJoy &ljoy, ArbotixPro &arbotixpro)
             while (Walking::GetInstance()->IsRunning() == 1) usleep(8000);
         }
         ToggleRobotStandby();
+        printf("Standby Mode has been toggled.\n");
+        printf("Robot Standby Mode Active: \n");
+        printf(robotInStandby ? "true" : "false");
         usleep(8000);
     }
 
     if (robotInStandby == 1)
     {
         usleep(8000);
-        printf("Robot is in Standby Mode\n");
+
         return;
     }
 
