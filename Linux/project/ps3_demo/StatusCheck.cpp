@@ -34,6 +34,7 @@ minIni* StatusCheck::m_ini;
 minIni* StatusCheck::m_ini1;
 
 bool robotInStandby = true;
+//#define Southpaw
 
 bool ToggleRobotStandby(void)
 {
@@ -70,45 +71,29 @@ void StatusCheck::Check(LinuxJoy &ljoy, ArbotixPro &arbotixpro)
         return;
     }
 
-//TODO: Testing auto stop when fallen
-    if (MotionStatus::FALLEN != STANDUP && m_is_started == 1)
-    {
-        int i = JointData::ID_R_SHOULDER_PITCH;
-        Walking::GetInstance()->Stop();
-        for ( ; i < JointData::ID_L_ELBOW; ++i )
-        {
-            Walking::GetInstance()->m_Joint.SetEnable( i, false );
-        }
-        printf( "I think I've fallen over!\r\n");
-        while (Walking::GetInstance()->IsRunning() == 1) usleep(8000);
-        LinuxActionScript::m_stop = 1;
-    }
 
 //////////////////////////////////////////////////////////////////////////////////////
 // IMU AUTO GETUP ROUTINE
 //////////////////////////////////////////////////////////////////////////////////////
+    /*
+         if(MotionStatus::FALLEN != STANDUP && (m_cur_mode == SOCCER) && m_is_started == 1)
+        {
+         Walking::GetInstance()->Stop();
 
-    if (MotionStatus::FALLEN != STANDUP && /*(m_cur_mode == SOCCER) &&*/ m_is_started == 1)
-    {
-        Walking::GetInstance()->Stop();
+            while(Walking::GetInstance()->IsRunning() == 1) usleep(8000);
 
-        while (Walking::GetInstance()->IsRunning() == 1) usleep(8000);
+         Action::GetInstance()->m_Joint.SetEnableBody(true, true);
 
-        Action::GetInstance()->m_Joint.SetEnableBody(true, true);
-        while (Action::GetInstance()->IsRunning() == 1) usleep(8000);
-
-
-        if (MotionStatus::FALLEN == FORWARD)
-            Action::GetInstance()->Start(10);   // FORWARD GETUP 10
-        else if (MotionStatus::FALLEN == BACKWARD)
-            Action::GetInstance()->Start(11);   // BACKWARD GETUP 11
-
-        while (Action::GetInstance()->IsRunning() == 1) usleep(8000);
+        if(MotionStatus::FALLEN == FORWARD)
+            Action::GetInstance()->Start(1);   // FORWARD GETUP 10
+        else if(MotionStatus::FALLEN == BACKWARD)
+            Action::GetInstance()->Start(1);   // BACKWARD GETUP 11
+         while(Action::GetInstance()->IsRunning() == 1) usleep(8000);
 
         Head::GetInstance()->m_Joint.SetEnableHeadOnly(true, true);
         Walking::GetInstance()->m_Joint.SetEnableBodyWithoutHead(true, true);
-    }
-
+            }
+    */
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -116,7 +101,6 @@ void StatusCheck::Check(LinuxJoy &ljoy, ArbotixPro &arbotixpro)
 //////////////////////////////////////////////////////////////////////////////////////
     if (ljoy.buttonPressed(JOYSTICK_BUTTONS::X))
     {
-
         Walking::GetInstance()->Stop();
         while (Walking::GetInstance()->IsRunning() == 1) usleep(8000);
         m_is_started    = 0;
@@ -162,11 +146,11 @@ void StatusCheck::Check(LinuxJoy &ljoy, ArbotixPro &arbotixpro)
 
         Walking::GetInstance()->m_Joint.SetEnableBodyWithoutHead(true);
         Action::GetInstance()->m_Joint.SetEnableBody(false);
-        usleep(5000);
+        usleep(500);
         Head::GetInstance()->m_Joint.SetEnableHeadOnly(true);
     }
 
-    /*
+
     //////////////////////////////////////////////////////////////////////////////////////
     // Action Script Button Assignment
     //////////////////////////////////////////////////////////////////////////////////////
@@ -174,19 +158,19 @@ void StatusCheck::Check(LinuxJoy &ljoy, ArbotixPro &arbotixpro)
     //////////////////////////////////////////////////////////////////////////////////////
     // Select
     //////////////////////////////////////////////////////////////////////////////////////
-        if (ljoy.buttonPressed(JOYSTICK_BUTTONS::SELECT_OPT))
+    if (ljoy.buttonPressed(JOYSTICK_BUTTONS::SELECT_OPT))
+    {
+        if (LinuxActionScript::m_is_running == 0)
         {
-            if(LinuxActionScript::m_is_running == 0)
-            {
-                m_cur_mode = SOCCER;
-                LinuxActionScript::m_stop = 0;
-                Head::GetInstance()->m_Joint.SetEnableBody(false);
-                Walking::GetInstance()->m_Joint.SetEnableBody(false);
-                Action::GetInstance()->m_Joint.SetEnableBody(true);
-                LinuxActionScript::ScriptStart(SCRIPT_FILE_PATH_SELECT);
-                while(Action::GetInstance()->IsRunning() == true) usleep(8000);
-            }
+            m_cur_mode = SOCCER;
+            LinuxActionScript::m_stop = 0;
+            Head::GetInstance()->m_Joint.SetEnableBody(false);
+            Walking::GetInstance()->m_Joint.SetEnableBody(false);
+            Action::GetInstance()->m_Joint.SetEnableBody(true);
+            LinuxActionScript::ScriptStart(SCRIPT_FILE_PATH_SELECT);
+            while (Action::GetInstance()->IsRunning() == true) usleep(8000);
         }
+    }
 
 
 
@@ -194,131 +178,131 @@ void StatusCheck::Check(LinuxJoy &ljoy, ArbotixPro &arbotixpro)
     //////////////////////////////////////////////////////////////////////////////////////
     // Square
     //////////////////////////////////////////////////////////////////////////////////////
-        if (ljoy.buttonPressed(JOYSTICK_BUTTONS::SQUARE))
+    if (ljoy.buttonPressed(JOYSTICK_BUTTONS::SQUARE))
+    {
+        if (LinuxActionScript::m_is_running == 0)
         {
-            if(LinuxActionScript::m_is_running == 0)
-            {
-                m_cur_mode = SOCCER;
-                LinuxActionScript::m_stop = 0;
-                Head::GetInstance()->m_Joint.SetEnableBody(false);
-                Walking::GetInstance()->m_Joint.SetEnableBody(false);
-                Action::GetInstance()->m_Joint.SetEnableBody(true);
-                LinuxActionScript::ScriptStart(SCRIPT_FILE_PATH_SQUARE);
-                while(Action::GetInstance()->IsRunning() == true) usleep(8000);
-            }
+            m_cur_mode = SOCCER;
+            LinuxActionScript::m_stop = 0;
+            Head::GetInstance()->m_Joint.SetEnableBody(false);
+            Walking::GetInstance()->m_Joint.SetEnableBody(false);
+            Action::GetInstance()->m_Joint.SetEnableBody(true);
+            LinuxActionScript::ScriptStart(SCRIPT_FILE_PATH_SQUARE);
+            while (Action::GetInstance()->IsRunning() == true) usleep(8000);
         }
+    }
 
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Circle
     //////////////////////////////////////////////////////////////////////////////////////
-        if (ljoy.buttonPressed(JOYSTICK_BUTTONS::CIRCLE))
+    if (ljoy.buttonPressed(JOYSTICK_BUTTONS::CIRCLE))
+    {
+        if (LinuxActionScript::m_is_running == 0)
         {
-            if(LinuxActionScript::m_is_running == 0)
-            {
-                m_cur_mode = SOCCER;
-                LinuxActionScript::m_stop = 0;
-                Head::GetInstance()->m_Joint.SetEnableBody(false);
-                Walking::GetInstance()->m_Joint.SetEnableBody(false);
-                Action::GetInstance()->m_Joint.SetEnableBody(true);
-                LinuxActionScript::ScriptStart(SCRIPT_FILE_PATH_CIRCLE);
-                while(Action::GetInstance()->IsRunning() == true) usleep(8000);
-            }
+            m_cur_mode = SOCCER;
+            LinuxActionScript::m_stop = 0;
+            Head::GetInstance()->m_Joint.SetEnableBody(false);
+            Walking::GetInstance()->m_Joint.SetEnableBody(false);
+            Action::GetInstance()->m_Joint.SetEnableBody(true);
+            LinuxActionScript::ScriptStart(SCRIPT_FILE_PATH_CIRCLE);
+            while (Action::GetInstance()->IsRunning() == true) usleep(8000);
         }
+    }
 
 
     //////////////////////////////////////////////////////////////////////////////////////
     // R1
     //////////////////////////////////////////////////////////////////////////////////////
-        if (ljoy.buttonPressed(JOYSTICK_BUTTONS::R1))
+    if (ljoy.buttonPressed(JOYSTICK_BUTTONS::R1))
+    {
+        if (LinuxActionScript::m_is_running == 0)
         {
-            if(LinuxActionScript::m_is_running == 0)
-            {
-                m_cur_mode = SOCCER;
-                LinuxActionScript::m_stop = 0;
-                Head::GetInstance()->m_Joint.SetEnableBody(false);
-                Walking::GetInstance()->m_Joint.SetEnableBody(false);
-                Action::GetInstance()->m_Joint.SetEnableBody(true);
-                LinuxActionScript::ScriptStart(SCRIPT_FILE_PATH_R1);
-                while(Action::GetInstance()->IsRunning() == true) usleep(8000);
-            }
+            m_cur_mode = SOCCER;
+            LinuxActionScript::m_stop = 0;
+            Head::GetInstance()->m_Joint.SetEnableBody(false);
+            Walking::GetInstance()->m_Joint.SetEnableBody(false);
+            Action::GetInstance()->m_Joint.SetEnableBody(true);
+            LinuxActionScript::ScriptStart(SCRIPT_FILE_PATH_R1);
+            while (Action::GetInstance()->IsRunning() == true) usleep(8000);
         }
+    }
 
 
     //////////////////////////////////////////////////////////////////////////////////////
     // R2
     //////////////////////////////////////////////////////////////////////////////////////
-        if (ljoy.buttonPressed(JOYSTICK_BUTTONS::R2))
+    if (ljoy.buttonPressed(JOYSTICK_BUTTONS::R2))
+    {
+        if (LinuxActionScript::m_is_running == 0)
         {
-            if(LinuxActionScript::m_is_running == 0)
-            {
-                m_cur_mode = SOCCER;
-                LinuxActionScript::m_stop = 0;
-                Head::GetInstance()->m_Joint.SetEnableBody(false);
-                Walking::GetInstance()->m_Joint.SetEnableBody(false);
-                Action::GetInstance()->m_Joint.SetEnableBody(true);
-                LinuxActionScript::ScriptStart(SCRIPT_FILE_PATH_R2);
-                while(Action::GetInstance()->IsRunning() == true) usleep(8000);
-            }
+            m_cur_mode = SOCCER;
+            LinuxActionScript::m_stop = 0;
+            Head::GetInstance()->m_Joint.SetEnableBody(false);
+            Walking::GetInstance()->m_Joint.SetEnableBody(false);
+            Action::GetInstance()->m_Joint.SetEnableBody(true);
+            LinuxActionScript::ScriptStart(SCRIPT_FILE_PATH_R2);
+            while (Action::GetInstance()->IsRunning() == true) usleep(8000);
         }
+    }
 
 
 
     //////////////////////////////////////////////////////////////////////////////////////
     // L1
     //////////////////////////////////////////////////////////////////////////////////////
-        if (ljoy.buttonPressed(JOYSTICK_BUTTONS::L1))
+    if (ljoy.buttonPressed(JOYSTICK_BUTTONS::L1))
+    {
+        if (LinuxActionScript::m_is_running == 0)
         {
-            if(LinuxActionScript::m_is_running == 0)
-            {
-                m_cur_mode = SOCCER;
-                LinuxActionScript::m_stop = 0;
-                Head::GetInstance()->m_Joint.SetEnableBody(false);
-                Walking::GetInstance()->m_Joint.SetEnableBody(false);
-                Action::GetInstance()->m_Joint.SetEnableBody(true);
-                LinuxActionScript::ScriptStart(SCRIPT_FILE_PATH_L1);
-                while(Action::GetInstance()->IsRunning() == true) usleep(8000);
-            }
+            m_cur_mode = SOCCER;
+            LinuxActionScript::m_stop = 0;
+            Head::GetInstance()->m_Joint.SetEnableBody(false);
+            Walking::GetInstance()->m_Joint.SetEnableBody(false);
+            Action::GetInstance()->m_Joint.SetEnableBody(true);
+            LinuxActionScript::ScriptStart(SCRIPT_FILE_PATH_L1);
+            while (Action::GetInstance()->IsRunning() == true) usleep(8000);
         }
+    }
 
 
     //////////////////////////////////////////////////////////////////////////////////////
     // L2
     //////////////////////////////////////////////////////////////////////////////////////
-        if (ljoy.buttonPressed(JOYSTICK_BUTTONS::L2))
+    if (ljoy.buttonPressed(JOYSTICK_BUTTONS::L2))
+    {
+        if (LinuxActionScript::m_is_running == 0)
         {
-            if(LinuxActionScript::m_is_running == 0)
-            {
-                m_cur_mode = SOCCER;
-                LinuxActionScript::m_stop = 0;
-                Head::GetInstance()->m_Joint.SetEnableBody(false);
-                Walking::GetInstance()->m_Joint.SetEnableBody(false);
-                Action::GetInstance()->m_Joint.SetEnableBody(true);
-                LinuxActionScript::ScriptStart(SCRIPT_FILE_PATH_L2);
-                while(Action::GetInstance()->IsRunning() == true) usleep(8000);
-            }
+            m_cur_mode = SOCCER;
+            LinuxActionScript::m_stop = 0;
+            Head::GetInstance()->m_Joint.SetEnableBody(false);
+            Walking::GetInstance()->m_Joint.SetEnableBody(false);
+            Action::GetInstance()->m_Joint.SetEnableBody(true);
+            LinuxActionScript::ScriptStart(SCRIPT_FILE_PATH_L2);
+            while (Action::GetInstance()->IsRunning() == true) usleep(8000);
         }
+    }
 
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Start
     //////////////////////////////////////////////////////////////////////////////////////
-        if (ljoy.buttonPressed(JOYSTICK_BUTTONS::START_SHARE))
+    if (ljoy.buttonPressed(JOYSTICK_BUTTONS::START_SHARE))
+    {
+        if (LinuxActionScript::m_is_running == 0)
         {
-            if(LinuxActionScript::m_is_running == 0)
-            {
-                m_cur_mode = SOCCER;
-                LinuxActionScript::m_stop = 0;
-                Head::GetInstance()->m_Joint.SetEnableBody(false);
-                Walking::GetInstance()->m_Joint.SetEnableBody(false);
-                Action::GetInstance()->m_Joint.SetEnableBody(true);
-                LinuxActionScript::ScriptStart(SCRIPT_FILE_PATH_START);
-                while(Action::GetInstance()->IsRunning() == true) usleep(8000);
-            }
+            m_cur_mode = SOCCER;
+            LinuxActionScript::m_stop = 0;
+            Head::GetInstance()->m_Joint.SetEnableBody(false);
+            Walking::GetInstance()->m_Joint.SetEnableBody(false);
+            Action::GetInstance()->m_Joint.SetEnableBody(true);
+            LinuxActionScript::ScriptStart(SCRIPT_FILE_PATH_START);
+            while (Action::GetInstance()->IsRunning() == true) usleep(8000);
         }
+    }
 
 
-    */
+
 
 //////////////////////////////////////////////////////////////////////////////////////
 // PS3 R/C Control code
@@ -340,16 +324,21 @@ void StatusCheck::Check(LinuxJoy &ljoy, ArbotixPro &arbotixpro)
         ry = ljoy.axis(JOYSTICK_AXES::LY) / 256;
 #endif
 
-//        fprintf(stderr, " (X:%d Y:%d)\n", rx, ry);
+//          fprintf(stderr, " (X:%d Y:%d)\n", rx, ry);
 
         if (abs(rx) > dead_band || abs(ry) > dead_band)
         {
             xd = (double)(rx - dead_band) / 256;
             yd = (double)(ry - dead_band) / 256;
-            RLTurn = 50 * xd;
-            FBStep = 45 * yd;
-//            fprintf(stderr, " (yd:%.1f)\n", yd);
-            //Walking::GetInstance()->HIP_PITCH_OFFSET = Walking::GetInstance()->HIP_PITCH_OFFSET_START + yd/2;
+            RLTurn = 60 * xd;
+            FBStep = 20 * yd;
+//For config_FAST.ini
+//              RLTurn = 50*xd;
+//              FBStep = 45*yd;
+
+//              fprintf(stderr, " (yd:%.1f)\n", yd);
+//              Walking::GetInstance()->HIP_PITCH_OFFSET =
+            Walking::GetInstance()->HIP_PITCH_OFFSET_START + yd / 2;
             if (FBStep < 0)
             {
                 FBStep = 20 * yd;
@@ -371,14 +360,15 @@ void StatusCheck::Check(LinuxJoy &ljoy, ArbotixPro &arbotixpro)
             }
         }
         Walking::GetInstance()->speedAdj = speedAdjSum;
-        Walking::GetInstance()->X_OFFSET = Walking::GetInstance()->X_OFFSET_START - speedAdjSum;
+//          Walking::GetInstance()->X_OFFSET = Walking::GetInstance()->X_OFFSET_START -
+        speedAdjSum;
 
-        //double hip_offset = Walking::GetInstance()->HIP_PITCH_OFFSET;
-//        fprintf(stderr, " (hip offset:%.1f)\n", hip_offset);
+//          double hip_offset = Walking::GetInstance()->HIP_PITCH_OFFSET;
+//          fprintf(stderr, " (hip offset:%.1f)\n", hip_offset);
         Walking::GetInstance()->X_MOVE_AMPLITUDE = FBStep;
         Walking::GetInstance()->Y_MOVE_AMPLITUDE = RLStep;
         Walking::GetInstance()->A_MOVE_AMPLITUDE = RLTurn;
-//      fprintf(stderr, " (FB:%.1f RL:%.1f)\n", FBStep, RLTurn);
+//          fprintf(stderr, " (FB:%.1f RL:%.1f)\n", FBStep, RLTurn);
     }
     else //things only done in auto mode
     {
@@ -389,7 +379,6 @@ void StatusCheck::Check(LinuxJoy &ljoy, ArbotixPro &arbotixpro)
 //////////////////////////////////////////////////////////////////////////////////////
 // STOP WALKING GAIT ENGINE
 //////////////////////////////////////////////////////////////////////////////////////
-
     if (Walking::GetInstance()->IsRunning() == true && ljoy.buttonPressed(JOYSTICK_BUTTONS::D_DOWN))
     {
         fprintf(stderr, "STOPPING WALKING GAIT\n");
@@ -485,14 +474,20 @@ void StatusCheck::Check(LinuxJoy &ljoy, ArbotixPro &arbotixpro)
 
     if ((PS3BallFollower::GetInstance()->bHeadAuto == false && (m_cur_mode == SOCCER || m_cur_mode == SITTING)) )
     {
-        int lx, ly, dead_band = 6;
+        int lx = 128, ly = 128;
+        int dead_band = 5;
         double pan, tilt;
         pan = MotionStatus::m_CurrentJoints.GetAngle(JointData::ID_HEAD_PAN);
         tilt = MotionStatus::m_CurrentJoints.GetAngle(JointData::ID_HEAD_TILT);
         Point2D pos = Point2D(pan, tilt);
 
-        lx = ljoy.axis(JOYSTICK_AXES::RX) / 256;
-        ly = ljoy.axis(JOYSTICK_AXES::RY) / 256;
+#ifdef Southpaw
+        lx = -(PS3.key.LJoyX - 128);
+        ly = -(PS3.key.LJoyY - 128);
+#else
+        lx = -(PS3.key.RJoyX - 128);
+        ly = -(PS3.key.RJoyY - 128);
+#endif
 
         if (abs(lx) > dead_band || abs(ly) > dead_band)
         {
@@ -535,4 +530,3 @@ void StatusCheck::mPlay(int motion_page, int mode, int wait)
     }
     return;
 }
-

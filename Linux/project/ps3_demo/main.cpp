@@ -16,12 +16,12 @@
 
 #include "StatusCheck.h"
 
-#ifdef MX28_1024
+#ifdef AXDXL_1024
 #define MOTION_FILE_PATH    ((char *)"../../../Data/motion_1024.bin")
 #else
 #define MOTION_FILE_PATH    ((char *)"../../../Data/motion_4096.bin")
 #endif
-#define INI_FILE_PATH       ((char *)"../../../Data/config.ini")
+#define INI_FILE_PATH       ((char *)"../../../Data/config_SMOOTH.ini")
 
 #define M_INI   ((char *)"../../../Data/slow-walk.ini")
 #define SCRIPT_FILE_PATH    "script.asc"
@@ -47,8 +47,8 @@ int change_current_dir()
 
 int main(int argc, char *argv[])
 {
+    int trackerSel;
     change_current_dir();
-    //int trackerSel;
 
     minIni* ini = new minIni(INI_FILE_PATH);
     minIni* ini1 = new minIni(M_INI);
@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
     {
         arbotixpro.DXLPowerOn(false);
         //for(int id=JointData::ID_R_SHOULDER_PITCH; id<JointData::NUMBER_OF_JOINTS; id++)
-        //  cm730.WriteByte(id, MX28::P_TORQUE_ENABLE, 0, 0);
+        //  arbotixpro.WriteByte(id, AXDXL::P_TORQUE_ENABLE, 0, 0);
     }
     else
     {
